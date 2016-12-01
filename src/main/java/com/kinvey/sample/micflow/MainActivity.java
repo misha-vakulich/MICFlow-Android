@@ -1,9 +1,5 @@
 package com.kinvey.sample.micflow;
 
-import java.io.IOException;
-
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
@@ -12,13 +8,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.kinvey.android.Client;
-import com.kinvey.android.callback.KinveyMICCallback;
 import com.kinvey.android.callback.KinveyUserCallback;
-import com.kinvey.android.ui.MICLoginActivity;
-import com.kinvey.java.User;
-import com.kinvey.java.LinkedResources.LinkedGenericJson;
-import com.kinvey.java.core.DownloaderProgressListener;
-import com.kinvey.java.core.MediaHttpDownloader;
+import com.kinvey.android.store.UserStore;
+import com.kinvey.java.dto.User;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -96,8 +88,7 @@ public class MainActivity extends ActionBarActivity {
 
     private void loginWithLoginPage(){
         loading();
-        kinveyClient.user().presentMICLoginActivity(redirectURI, new KinveyUserCallback(){
-//        kinveyClient.user().loginWithAuthorizationCodeLoginPage(redirectURI, new KinveyMICCallback() {
+        UserStore.presentMICLoginActivity(kinveyClient, redirectURI, new KinveyUserCallback<User>(){
 
             @Override
             public void onSuccess(User user) {
@@ -109,21 +100,15 @@ public class MainActivity extends ActionBarActivity {
                 errorView.setText(error.getMessage());
             }
 
-//            @Override
-//            public void onReadyToRender(String myURLToRender) {
-//                Uri uri = Uri.parse(myURLToRender);
-//                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-//                startActivity(intent);
-//            }
         });
     }
 
     private void loginAutomated(){
         loading();
-        kinveyClient.user().loginWithAuthorizationCodeAPI(USERNAME, PASSWORD, redirectURI, new KinveyUserCallback() {
+        UserStore.loginWithAuthorizationCodeAPI(kinveyClient, USERNAME, PASSWORD, redirectURI, new KinveyUserCallback<User>() {
 
             @Override
-            public void onSuccess(User user) {
+            public void onSuccess(com.kinvey.java.dto.User user) {
                 updateStatus();
 
             }
@@ -139,7 +124,7 @@ public class MainActivity extends ActionBarActivity {
     private void logout(){
         loading();
         try{
-            kinveyClient.user().logout().execute();
+            UserStore.logout(kinveyClient);
         }catch(Exception e){
             errorView.setText(e.getMessage());
         }
@@ -151,7 +136,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void updateStatus(){
-        if (kinveyClient.user().isUserLoggedIn()){
+        if (kinveyClient.isUserLoggedIn()){
             loginStatus.setText("User is logged in!");
         }else{
             loginStatus.setText("Not logged in yet!");

@@ -3,10 +3,12 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.1.1'
+        classpath 'com.android.tools.build:gradle:2.0.0'
+        classpath "io.realm:realm-gradle-plugin:1.1.0"
     }
 }
 apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
 
 repositories {
     jcenter()
@@ -46,5 +48,5 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.0'
-    compile(name:'android-lib-release', ext:'aar')
+    compile ':kinvey-android:3.0.0@aar'
 }
