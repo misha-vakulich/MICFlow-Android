@@ -4,9 +4,11 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.1.1'
+        classpath "io.realm:realm-gradle-plugin:1.1.0"
     }
 }
 apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
 
 repositories {
     jcenter()
@@ -21,7 +23,7 @@ android {
 
     defaultConfig {
         applicationId "com.kinvey.sample.micflow"
-        minSdkVersion 9
+        minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
@@ -46,5 +48,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.0'
-    compile(name:'android-lib-release', ext:'aar')
+    compile 'com.android.support:multidex:1.0.1'
+    compile ':kinvey-android:3.0.0@aar'
 }
