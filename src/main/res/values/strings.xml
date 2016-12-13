@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="kinvey_account">Kinvey</string>
     <string name="app_name">MICFlow</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="login_with_login_page">Login with Login Page</string>
+    <string name="kinvey_login">Login with Kinvey</string>
     <string name="login_with_automated_flow">Login with Automated Flow</string>
     <string name="logout">Logout</string>
 

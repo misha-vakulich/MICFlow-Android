@@ -2,6 +2,7 @@ package com.kinvey.sample.micflow;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -11,6 +12,8 @@ import com.kinvey.android.Client;
 import com.kinvey.android.callback.KinveyUserCallback;
 import com.kinvey.android.store.UserStore;
 import com.kinvey.java.dto.User;
+
+import java.io.IOException;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -27,6 +30,7 @@ public class MainActivity extends ActionBarActivity {
     private TextView loginStatus;
     private TextView errorView;
     private Button loginWithPage;
+    private Button kinveyLogin;
     private Button loginAutomated;
     private Button logout;
 
@@ -36,7 +40,12 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         //Create the Kinvey Client with an AppKey and AppSecret
-        kinveyClient = new Client.Builder(APP_KEY, APP_SECRET, this).build();
+        kinveyClient = new Client.Builder(APP_KEY, APP_SECRET, this)
+
+                .setSSOEnabled(true)
+                .setAccountType("com.kinvey.myapplogin")
+                .build();
+
 
         bindViews();
 
@@ -54,6 +63,7 @@ public class MainActivity extends ActionBarActivity {
         loginStatus = (TextView) findViewById(R.id.login_status);
         loginWithPage = (Button) findViewById(R.id.loginpage);
         loginAutomated = (Button) findViewById(R.id.automated);
+        kinveyLogin = (Button) findViewById(R.id.kinvey_login);
         logout = (Button) findViewById(R.id.logout);
         errorView = (TextView) findViewById(R.id.login_errors);
 
@@ -62,6 +72,20 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 loginWithLoginPage();
+
+            }
+        });
+
+        kinveyLogin.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                try {
+                    kinveyLogin();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    errorView.setText(e.getMessage());
+                }
 
             }
         });
@@ -103,6 +127,21 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
+    private void kinveyLogin() throws IOException {
+        UserStore.login("test", "test", kinveyClient, new KinveyUserCallback<User>() {
+            @Override
+            public void onSuccess(User user) {
+                updateStatus();
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                errorView.setText(throwable.getMessage());
+            }
+
+        });
+    }
+
     private void loginAutomated(){
         loading();
         UserStore.loginWithAuthorizationCodeAPI(kinveyClient, USERNAME, PASSWORD, redirectURI, new KinveyUserCallback<User>() {
@@ -124,11 +163,14 @@ public class MainActivity extends ActionBarActivity {
     private void logout(){
         loading();
         try{
-            UserStore.logout(kinveyClient);
-        }catch(Exception e){
-            errorView.setText(e.getMessage());
+//            if(kinveyClient.isUserLoggedIn()) {
+                UserStore.logout(kinveyClient);
+                updateStatus();
+//            }
+        } catch(Exception e){
+            Log.d("MainActivity", e.toString());
+            errorView.setText(e.toString());
         }
-        updateStatus();
     }
 
     private void loading(){

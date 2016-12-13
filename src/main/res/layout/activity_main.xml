@@ -26,10 +26,19 @@
         android:textSize="16sp" />
 
     <Button
-        android:id="@+id/automated"
+        android:id="@+id/kinvey_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/loginpage"
+        android:layout_marginTop="20dp"
+        android:text="@string/kinvey_login"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/automated"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/kinvey_login"
         android:layout_marginTop="20dp"
         android:text="@string/login_with_automated_flow"
         android:textSize="16sp" />
